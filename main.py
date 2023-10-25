@@ -60,8 +60,6 @@ def emotion_nearest_songs(df, artist_name, track_name):
         'rejoicing_score', 'soothing_satisfied_score', 'sadness_disappointment_score', 'anger_discontent_score'
     ]
     chosen_emotion_vector = chosen_song[emotion_scores].values
-
-    # Step 2: Filter songs by the chosen song's theme
     df_copy = df.copy()
 
     # Step 1: Compute the distances between the chosen song and all other songs based on emotion scores
