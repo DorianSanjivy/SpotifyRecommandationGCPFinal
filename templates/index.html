@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Recommendation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card mb-5">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Enter Song Details</h2>
+                    <form id="recommendation-form" class="mb-5">
+                        <div class="form-group">
+                            <label for="artist_name">Artist Name:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="artist_name" name="artist_name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="track_name">Track Name:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-music"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="track_name" name="track_name" required>
+                            </div>
+                        </div>
+
+                        <input type="submit" value="Get Recommendations" class="btn btn-primary btn-block">
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Recommendations</h3>
+
+                    <div id="theme-results-section">
+                        <h4>Based on Theme:</h4>
+                        <ul id="theme-results" class="list-group">
+                            <!-- Les recommandations basées sur le thème seront insérées ici -->
+                        </ul>
+                    </div>
+
+                    <div id="emotion-results-section" class="mt-4">
+                        <h4>Based on Emotion:</h4>
+                        <ul id="emotion-results" class="list-group">
+                            <!-- Les recommandations basées sur l'émotion seront insérées ici -->
+                        </ul>
+                    </div>
+
+                    <div id="lyrics-results-section" class="mt-4">
+                        <h4>Based on Lyrics:</h4>
+                        <ul id="lyrics-results" class="list-group">
+                            <!-- Les recommandations basées sur les paroles seront insérées ici -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+$(document).ready(function() {
+    $('#recommendation-form').submit(function(event) {
+        event.preventDefault();
+
+        $.ajax({
+            url: "/recommend",
+            method: "POST",
+            data: $(this).serialize(),
+            success: function(data) {
+                // Theme
+                let themeList = $("#theme-results");
+                themeList.empty();
+                if (data.theme.length > 0) {
+                    data.theme.forEach(song => {
+                        themeList.append('<li class="list-group-item">' + song.artist_name + ' - ' + song.track_name + '</li>');
+                    });
+                } else {
+                    themeList.append('<p class="list-group-item">No recommendations based on theme.</p>');
+                }
+
+                // Emotion
+                let emotionList = $("#emotion-results");
+                emotionList.empty();
+                if (data.emotion.length > 0) {
+                    data.emotion.forEach(song => {
+                        emotionList.append('<li class="list-group-item">' + song.artist_name + ' - ' + song.track_name + '</li>');
+                    });
+                } else {
+                    emotionList.append('<p class="list-group-item">No recommendations based on emotion.</p>');
+                }
+
+                // Lyrics
+                let lyricsList = $("#lyrics-results");
+                lyricsList.empty();
+                if (data.lyrics.length > 0) {
+                    data.lyrics.forEach(song => {
+                        lyricsList.append('<li class="list-group-item">' + song.artist_name + ' - ' + song.track_name + '</li>');
+                    });
+                } else {
+                    lyricsList.append('<p class="list-group-item">No recommendations based on lyrics.</p>');
+                }
+            }
+        });
+    });
+});
+
+
+</script>
+
+</body>
+</html>
