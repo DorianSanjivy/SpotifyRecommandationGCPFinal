@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, send_from_directory, request, jsonify
 import numpy as np
 from scipy.spatial import distance
 import pandas as pd
 import os
+import random
 
 
 app = Flask(__name__)
@@ -102,10 +103,19 @@ def lyrics_nearest_songs(df, artist_name, track_name):
     return nearest_songs[['artist_name', 'track_name', 'distance']]
 
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/emotion')
+def emotion_page():
+    return render_template('emotion.html')
+
+@app.route('/theme')
+def theme_page():
+    themes = ["Eccentricity", "Melancholy", "Ambition", "Inner Conflict", "Aggression", "Showing-off", "Resilience","Authenticity", "Introspection", "Hustle"]
+    return render_template('theme.html', themes=themes)
+
 
 
 @app.route('/recommend', methods=['POST'])
@@ -122,6 +132,43 @@ def recommend():
         'emotion': emotion_results,
         'lyrics': lyrics_results
     })
+
+
+@app.route('/get_songs', methods=['POST'])
+def get_songs():
+    emotion_mapping = {
+        'rejoicing': 'rejoicing_score',
+        'soothing': 'soothing_satisfied_score',
+        'sadness': 'sadness_disappointment_score',
+        'anger': 'anger_discontent_score'
+    }
+
+    emotion = request.form.get('emotion')
+
+    # Convert DataFrame to list of dictionaries
+    songs_list = df_sentiment.to_dict('records')
+
+    # Get the correct score name using the mapping
+    score_name = emotion_mapping.get(emotion, '')
+
+    # Sort the list based on emotion score
+    sorted_songs = sorted(songs_list, key=lambda x: x[score_name], reverse=True)[:10]
+
+    return jsonify({'songs': sorted_songs})
+
+
+@app.route('/get_theme_songs', methods=['POST'])
+def get_theme_songs():
+
+    theme = request.form.get('theme')
+
+    # Filter the DataFrame by theme
+    songs_for_theme = df_theme[df_theme['theme'] == theme].to_dict('records')
+
+    # Get 10 random songs from the filtered songs
+    selected_songs = random.sample(songs_for_theme, 10)
+
+    return jsonify({'songs': selected_songs})
 
 
 if __name__ == '__main__':
