@@ -1,1 +1,1 @@
-https://spotifyrecommendationflask.nw.r.appspot.com/
+https://spotifyflaskdeploymentfinal.nw.r.appspot.com/
