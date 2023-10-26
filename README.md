@@ -1,7 +1,7 @@
 https://spotifyflaskdeploymentfinal.nw.r.appspot.com/
 
 ```
-SpotifyRecommandation : Solution de site web pour la recommandation de musique
+SpotifyRecommandation : Solution web pour la recommandation de musique
 
 main.py : Application flask qui gère le backend du site.
 Gère :
