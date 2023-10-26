@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Recommendations</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Song Analyzer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ml-auto">
+                <a class="btn btn-primary mr-2" href="/">Recommendation</a>
+                <a class="btn btn-secondary mr-2" href="/emotion">Emotion</a>
+                <a class="btn btn-dark" href="/theme">Theme</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Select an emotion</h2>
+
+    <div class="d-flex justify-content-around">
+        <button class="btn btn-primary" id="rejoicing-btn">Rejoicing</button>
+        <button class="btn btn-secondary" id="soothing-btn">Soothing & Satisfied</button>
+        <button class="btn btn-warning" id="sadness-btn">Sadness & Disappointment</button>
+        <button class="btn btn-danger" id="anger-btn">Anger & Discontent</button>
+    </div>
+
+    <ul class="list-group mt-5" id="results-list">
+        <!-- Songs will be appended here -->
+    </ul>
+</div>
+
+<script>
+    // Use jQuery to handle button clicks and make AJAX calls
+    $(document).ready(function(){
+        $("button").click(function(){
+            // Get emotion from button ID
+            let emotion = $(this).attr('id').split('-')[0];
+
+            // Clear previous results
+            $("#results-list").empty();
+
+            // Fetch songs based on selected emotion
+            $.ajax({
+                url: "/get_songs",
+                method: "POST",
+                data: { emotion: emotion },
+                success: function(data) {
+                    data.songs.forEach(song => {
+                        $("#results-list").append('<li class="list-group-item">' + song.artist_name + ' - ' + song.track_name + '</li>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

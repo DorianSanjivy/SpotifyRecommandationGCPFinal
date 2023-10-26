@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Recommendations</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Song Analyzer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ml-auto">
+                <a class="btn btn-primary mr-2" href="/">Recommendation</a>
+                <a class="btn btn-secondary mr-2" href="/emotion">Emotion</a>
+                <a class="btn btn-dark" href="/theme">Theme</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mb-5">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Select a Theme</h2>
+
+                    <!-- Theme buttons -->
+                    {% for theme in themes %}
+                        <button class="btn btn-primary m-2 theme-btn" data-theme="{{ theme }}">{{ theme }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Songs List -->
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Songs</h3>
+                    <ul id="songs-list" class="list-group">
+                        <!-- Songs will be populated here via JavaScript -->
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// When a theme button is clicked
+$('.theme-btn').on('click', function() {
+    var theme = $(this).data('theme');
+    $.post("/get_theme_songs", { theme: theme }, function(data) {
+        $('#songs-list').empty();
+        data.songs.forEach(song => {
+            $('#songs-list').append('<li class="list-group-item">' + song.artist_name + ' - ' + song.track_name + '</li>');
+        });
+    });
+});
+</script>
+
+</body>
+</html>
